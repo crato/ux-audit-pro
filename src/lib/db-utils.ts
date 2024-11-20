@@ -200,5 +200,3 @@ export async function getComments(auditId: string): Promise<IComment[]> {
     throw new DatabaseError('Failed to get comments');
   }
 }
-
-export { DatabaseError };
