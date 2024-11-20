@@ -1,38 +1,36 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
- 
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
 export function middleware(request: NextRequest) {
-  // Get the pathname of the request (e.g. /, /protected)
-  const path = request.nextUrl.pathname
+  const path = request.nextUrl.pathname;
+  const isAuthenticated = request.cookies.has('appSession');
 
-  // Protected routes - add your protected routes here
-  const protectedRoutes = ['/dashboard']
+  // Protected routes
+  const protectedPaths = ['/dashboard'];
+  const isProtectedPath = protectedPaths.some((p) => path.startsWith(p));
 
-  // Check if the path matches any protected route
-  const isProtectedRoute = protectedRoutes.some((route) => 
-    path.startsWith(route)
-  )
+  // Auth routes
+  const authRoutes = ['/api/auth/login', '/api/auth/logout', '/api/auth/callback'];
+  const isAuthRoute = authRoutes.some((r) => path.startsWith(r));
 
-  if (isProtectedRoute) {
-    // Get the token from the session cookie
-    const token = request.cookies.get('appSession')
-
-    // If there's no token, redirect to the login page
-    if (!token) {
-      const response = NextResponse.redirect(
-        new URL('/api/auth/login', request.url)
-      )
-      return response
-    }
+  // If it's a protected path and user is not authenticated
+  if (isProtectedPath && !isAuthenticated) {
+    const redirectUrl = new URL('/api/auth/login', request.url);
+    return NextResponse.redirect(redirectUrl);
   }
 
-  return NextResponse.next()
+  // If user is authenticated and trying to access auth routes (except logout)
+  if (isAuthenticated && isAuthRoute && !path.startsWith('/api/auth/logout')) {
+    const redirectUrl = new URL('/dashboard', request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  return NextResponse.next();
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
   matcher: [
     '/dashboard/:path*',
-    '/api/protected/:path*'
+    '/api/auth/:path*'
   ]
-}
+};
