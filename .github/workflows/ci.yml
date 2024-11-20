@@ -1,0 +1,45 @@
+name: UX Audit Pro CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NEXT_PUBLIC_APP_NAME: "UX Audit Pro"
+  NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Type check
+      run: npx tsc --noEmit
+
+    - name: Lint
+      run: npm run lint
+
+    - name: Build
+      run: npm run build
+      env:
+        # Add dummy values for build process
+        AUTH0_SECRET: ${{ secrets.AUTH0_SECRET }}
+        AUTH0_BASE_URL: ${{ secrets.AUTH0_BASE_URL }}
+        AUTH0_ISSUER_BASE_URL: ${{ secrets.AUTH0_ISSUER_BASE_URL }}
+        AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+        AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
