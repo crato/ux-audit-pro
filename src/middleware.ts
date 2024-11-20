@@ -9,20 +9,18 @@ export function middleware(request: NextRequest) {
   const protectedPaths = ['/dashboard'];
   const isProtectedPath = protectedPaths.some((p) => path.startsWith(p));
 
-  // Auth routes
-  const authRoutes = ['/api/auth/login', '/api/auth/logout', '/api/auth/callback'];
+  // Auth routes that should always be accessible
+  const authRoutes = ['/api/auth/login', '/api/auth/callback', '/api/auth/logout'];
   const isAuthRoute = authRoutes.some((r) => path.startsWith(r));
 
-  // If it's a protected path and user is not authenticated
-  if (isProtectedPath && !isAuthenticated) {
-    const redirectUrl = new URL('/api/auth/login', request.url);
-    return NextResponse.redirect(redirectUrl);
+  // Allow all auth routes
+  if (isAuthRoute) {
+    return NextResponse.next();
   }
 
-  // If user is authenticated and trying to access auth routes (except logout)
-  if (isAuthenticated && isAuthRoute && !path.startsWith('/api/auth/logout')) {
-    const redirectUrl = new URL('/dashboard', request.url);
-    return NextResponse.redirect(redirectUrl);
+  // Protect dashboard routes
+  if (isProtectedPath && !isAuthenticated) {
+    return NextResponse.redirect(new URL('/api/auth/login', request.url));
   }
 
   return NextResponse.next();
