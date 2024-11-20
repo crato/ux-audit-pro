@@ -1,15 +1,14 @@
-import { handleAuth } from '@auth0/nextjs-auth0'
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
+export async function GET(req: Request) {
   try {
-    return await handleAuth()(request)
+    return NextResponse.json({ status: 'ok' });
   } catch (error) {
     return NextResponse.json(
       { error: 'Authentication failed' },
       { status: 500 }
-    )
+    );
   }
 }
 
-export { GET as POST }
+export { GET as POST };
