@@ -35,21 +35,16 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const status = searchParams.get('status') as any;
-    const clientName = searchParams.get('clientName') || undefined;
-    const projectName = searchParams.get('projectName') || undefined;
-
-    const results = await listAudits({
+    const filters = {
       createdBy: session.user.sub,
-      status,
-      clientName,
-      projectName,
-      page,
-      limit
-    });
+      status: searchParams.get('status') as any,
+      clientName: searchParams.get('clientName') || undefined,
+      projectName: searchParams.get('projectName') || undefined,
+      page: parseInt(searchParams.get('page') || '1'),
+      limit: parseInt(searchParams.get('limit') || '10')
+    };
 
+    const results = await listAudits(filters);
     return NextResponse.json(results);
   } catch (error) {
     if (error instanceof Error) {
