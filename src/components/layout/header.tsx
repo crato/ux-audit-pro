@@ -1,38 +1,38 @@
+'use client';
+
+import { Bell, Settings, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { UserNav } from './user-nav';
 import Link from 'next/link';
-import { cookies } from 'next/headers';
-import ProfileButton from './profile-button';
+
 
 export default function Header() {
-  const isAuthenticated = cookies().has('appSession');
-
   return (
-    <header className="bg-white shadow">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 justify-between">
-          {/* Left section */}
-          <div className="flex">
-            <div className="flex flex-shrink-0 items-center">
-              <Link href="/" className="text-2xl font-bold text-gray-900">
-                UX Audit Pro
-              </Link>
+    <header className="sticky top-0 z-50 w-full border-b bg-white">
+      <div className="flex h-16 items-center px-4 sm:px-6 lg:px-8">
+    
+        {/* Search */}
+        <div className="flex flex-1  space-x-4">
+          <div className="w-96">
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search audits..."
+                className="pl-8"
+              />
             </div>
           </div>
+        </div>
 
-          {/* Right section */}
-          <div className="flex items-center">
-            {isAuthenticated ? (
-              <div className="relative ml-3">
-                <ProfileButton />
-              </div>
-            ) : (
-              <Link
-                href="/api/auth/login"
-                className="text-sm font-medium text-gray-700 hover:text-gray-900"
-              >
-                Login
-              </Link>
-            )}
-          </div>
+        {/* Actions */}
+        <div className="flex items-center space-x-4">
+          <Button variant="ghost" size="icon">
+            <Bell className="h-5 w-5" />
+          </Button>
+
+
+          <UserNav />
         </div>
       </div>
     </header>

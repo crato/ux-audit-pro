@@ -1,4 +1,6 @@
 import { Inter } from 'next/font/google';
+import { ToastProvider } from '@/components/ui/use-toast';
+import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import Header from '@/components/layout/header';
 import ClientLayout from '@/components/layout/client-layout';
@@ -16,14 +18,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
-        <ClientLayout>
-          <div className="min-h-screen bg-gray-50">
-            <Header />
-            {children}
-          </div>
-        </ClientLayout>
+    <html lang="en">
+      <body className={inter.className}>
+        <ToastProvider>
+          {children}
+          <Toaster />
+        </ToastProvider>
       </body>
     </html>
   );

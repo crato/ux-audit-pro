@@ -1,5 +1,6 @@
 'use client';
 
+import Footer from '@/components/layout/footer';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -53,6 +54,9 @@ export default function Sidebar() {
             })}
           </nav>
         </div>
+        <div className="flex items-center flex-shrink-0 px-4">
+            <Footer />
+          </div>
       </div>
     </div>
   );
